@@ -3,6 +3,9 @@
 These are notes from the [Certified Kubernetes Administrator Course](https://kodekloud.com/courses/certified-kubernetes-administrator-cka/) hosted on KodeKloud.
 
 # Sections
+- [00-MyNotes](docs/00-MyNotes)
+  - [00-LinuxCommands](docs/00-MyNotes/00-LinuxCommands.md)
+  - [00-K8sCommands](docs/00-MyNotes/00-K8sCommands.md)
 
 - [01-Introduction](docs/01-Introduction)
 

@@ -1,5 +1,5 @@
 # Course Introduction
-blah
+
   - Take me to the [Video Tutorial](https://kodekloud.com/topic/course-introduction-5/)
 
 #### This course focuses on Administration part of the kubernetes. 
