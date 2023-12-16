@@ -59,7 +59,7 @@ One major difference is that the `crictl` command is also aware of pods so you c
 So here’s a chart that lists the comparison between the Docker and `crictl` command line tools. So as you can see, a lot of command such as attach exec, images, info, inspect, logs, ps, stats, version etc., work exactly the same way, and some of the commands to create, remove and start and stop images work similarly too. So a full list of differences can be found in [this link](https://kubernetes.io/docs/reference/tools/map-crictl-dockercli/#retrieve-debugging-information).
 
 | docker cli | crictl            | Description                                                          | Unsupported Features                |
-|------------|-------------------|----------------------------------------------------------------------|-------------------------------------|
+| ---------- | ----------------- | -------------------------------------------------------------------- | ----------------------------------- |
 | attach     | attach            | Attach to a running container                                        | --detach-keys, --sig-proxy          |
 | exec       | exec              | Run a command in a running container                                 | --privileged, --user, --detach-keys |
 | images     | images            | List images                                                          |                                     |
