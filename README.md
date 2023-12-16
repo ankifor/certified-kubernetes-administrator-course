@@ -6,6 +6,10 @@ These are notes from the [Certified Kubernetes Administrator Course](https://kod
 - [00-MyNotes](docs/00-MyNotes)
   - [00-LinuxCommands](docs/00-MyNotes/00-LinuxCommands.md)
   - [00-K8sCommands](docs/00-MyNotes/00-K8sCommands.md)
+  - [00-Setup_minikube](docs/00-MyNotes/00-Setup_minikube.md)
+  - [00-TLS](docs/00-MyNotes/00-TLS.md)
+  - [00-ToDo](docs/00-MyNotes/00-ToDo.md)
+  
 
 - [01-Introduction](docs/01-Introduction)
 

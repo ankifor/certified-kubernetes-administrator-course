@@ -1,4 +1,13 @@
 # Kubernetes Commands
+- [Kubernetes Commands](#kubernetes-commands)
+  - [Kubectl gets](#kubectl-gets)
+  - [Other](#other)
+  - [Certificates](#certificates)
+  - [Connect to node](#connect-to-node)
+  - [Kubelet](#kubelet)
+
+
+
 
 ## Kubectl gets
 ```bash
@@ -124,15 +133,20 @@ openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 #Sign certificates: 
 openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
 ```
+## Connect to node
+```bash
+kubectl exec -it <pod> -- /bin/bash
+###
+k get node -o=wide
+ssh <ip>
+####
+scp cluster1-controlplane:/opt/cluster1.db /opt/cluster1.db
+```
+
 
 ## Kubelet
 
 ```bash
-# Connect to node
-k get node -o=wide
-ssh <ip>
-
-scp cluster1-controlplane:/opt/cluster1.db /opt/cluster1.db
 
 
 ps -aux | grep kubelet
