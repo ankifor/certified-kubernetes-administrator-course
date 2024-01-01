@@ -7,6 +7,18 @@
   - [Kubelet](#kubelet)
 
 
+## Namespace and Alias
+```bash
+kubectl config set-context <context-of-question> --namespace=<namespace-of-question>
+kubectl config use-context <context-of-question>
+
+alias k=kubectl
+
+
+kubectl api-resources
+```
+
+
 
 
 ## Kubectl gets
@@ -36,7 +48,31 @@ k get pods --selector app=App1
 k get pods --show-labels
 k get pod --selector env=dev
 k get all --selector env=dev
+
+
+# https://kubernetes.io/docs/reference/kubectl/jsonpath/
+k get pods -o json
+k get pods -o=jsonpath='{@}'
+k get pods -o=jsonpath='{.items[0]}'
+k get pods -o=jsonpath='{.items[0].metadata.name}'
+k get pods -o=jsonpath="{.items[*]['metadata.name', 'status.capacity']}"
+k get pods -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.startTime}{"\n"}{end}'
+k get pods -o=jsonpath='{.items[0].metadata.labels.kubernetes\.io/hostname}'
 ```
+
+## Information
+
+```
+k explain pods.spec
+```
+
+
+## Resource deletion
+```bash
+# do not wait!!
+k delete pod nginx --force 
+```
+
 
 ## Other
 ```bash
@@ -135,7 +171,7 @@ openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
 ```
 ## Connect to node
 ```bash
-kubectl exec -it <pod> -- /bin/bash
+k exec -it <pod> -- /bin/bash
 ###
 k get node -o=wide
 ssh <ip>

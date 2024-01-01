@@ -1,5 +1,6 @@
 # Linux Commands
 
+## Other
 ```bash
 alias k=kubectl
 find ./folder-name -type f | xargs tail -n +1
@@ -15,13 +16,16 @@ cat -n
 echo -n "paswrd"| base64
 echo -n "bX1zcWw=" | base64 --decode
 ```
-
+## GREP and AWK
 
 ```bash
 grep -o -E ".{200}gespeichert.{50}" 2023-11-28.log
 grep -o -E ".{20}POST.{100}" 2023-11-28.log
 grep -o -E ".{20}POST.{100}" 2023-12-01.log
 grep -o -E ".{20}GET.{100}" 2023-12-01.log
+
+# surronding 10 lines
+grep -C 10 "..."
 
 
 awk '/ERROR/ {match($0, /ERROR/); print substr($0, RSTART - 500, RLENGTH + 5500);}' 2023-12-15.log
@@ -32,25 +36,17 @@ awk '/GET/ {match($0, /GET/); print substr($0, RSTART - 100, RLENGTH + 1000);}' 
 awk '/debug/ {match($0, /debug/); print substr($0, RSTART - 500, RLENGTH + 1000);}' x.log
 
 
-POST \"/api/datenempfang/dguv\
-
 grep -i -o -E ".{20}ERROR.{20}" 2023-12-15.log
 grep -i -o -E ".{20}gespeichert.{20}" 2023-12-18.log
 
 jq '.' x.log > y.log
 jq ' map( select(.thread | test("Hikari") | not))' y.log > w.log
 date -d"2023-12-18T13:23" +%s
+```
 
+## Openshift
 
-
-LOG.info("Entitaet Lieferdatei erfolgreich in DB gespeichert");
-
-
-/api/datenempfang/dguv
-/dateneingang/swagger-ui/index.html
-
-
-
+```bash
 oc get pods -o=name -n ubreg-dev | grep bzst
 oc exec --stdin --tty -- /bin/bash
 
@@ -66,10 +62,10 @@ oc get secret dguv-server-cert-secret -o jsonpath="{.data}" | jq -r '."keystore.
 oc cp dateneingang-datenempfang-dguv-deployment-64b775dc98-qvdzm:tmp/log/dateneingang-datenempfang-dguv/2023-12-18.log ./x.log
 oc cp dateneingang-datenempfang-bzst-deployment-84858cbdb7-s9mqg:tmp/log/dateneingang-datenempfang-bzst/2023-12-20.log ./x.log
 oc cp dateneingang-datenempfang-bzst-deployment-5f45967c8c-pd2ns:etc/ssl/certs/truststore.p12 ./x.p12
+```
 
-------------------------
-# certs
-
+## Certs
+```bash
 openssl req -in csr.csr -noout -text
 openssl x509 -in certificate.crt -text -noout
 openssl x509 -inform der -in CERTIFICATE.der -text -noout
@@ -95,29 +91,28 @@ openssl pkcs12 -export -nokeys -out truststore_new.p12 -in 0_tobi-sein-zertifika
 
 "C:\Program Files (x86)\Java\JRE\1.8.0_371\bin\keytool.exe" -import -file 0.pem -alias firstCA -keystore truststore_new.p12 -storetype PKCS12
 
+```
 
-#-------------------------
-# curl
+## CURL
 
+```bash
 curl --parallel --parallel-immediate --parallel-max 3 http://frontend-monorepo-benchmark.workload.stba-e2.stba.cloud.intranet.bund.de/login
 seq 1 20000 | xargs -n 1 -P 20 curl -Z -so --parallel-immediate "http://frontend-monorepo-benchmark.workload.stba-e2.stba.cloud.intranet.bund.de/login"
 
 
 curl -v --cacert cacerts.pem --cert-type P12 --cert widnr_dabas-technical-dev.p12:******** --noproxy "*" https://dateneingang-datenempfang-bzst-system-test.workload.stba-e2.stba.cloud.intranet.bund.de/api/datenempfang/bzst
 
+```
 
-
-#-----------------------
-# kafka
-
-
+## Kafka
+```bash
 Kafka1-in.entw.rubd.stba.itzbund.net / 10.133.25.42
 Kafka2-in.entw.rubd.stba.itzbund.net / 10.133.25.43
 Kafka3-in.entw.rubd.stba.itzbund.net / 10.133.25.44
 
 
 
-https://docs.confluent.io/cloud/current/access-management/authenticate/oauth/access-rest-apis.html
+# https://docs.confluent.io/cloud/current/access-management/authenticate/oauth/access-rest-apis.html
 
 curl -X GET \
 -H "Content-Type: application/vnd.kafka.binary.v2+json" \
