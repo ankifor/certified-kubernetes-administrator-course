@@ -15,3 +15,6 @@
 - https://docs.linuxfoundation.org/tc-docs/certification/faq-cka-ckad-cks
 - https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad#cka-and-ckad-environment 
 - https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#enable-shell-autocompletion 
+
+
+- try tools `crictl`, `ctr`, `nerdcrt`

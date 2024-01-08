@@ -58,3 +58,11 @@
        - https://etcd.io/docs/
        - https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
 
+
+
+## Other notes
+
+`etcdctl --version` to get the version. Normally, API version is 2.
+
+`ETCDCTL_API=3 etcdctl version` to work with API 3. 
+Or `export ETCDCTL_API=3`

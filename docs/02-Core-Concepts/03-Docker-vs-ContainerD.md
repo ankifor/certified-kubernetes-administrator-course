@@ -76,7 +76,11 @@ So, since as I mentioned, `crictl` can be used to connect to any CRI compatible 
 
 So to summarize we have the `ctr` command line utility that comes with containerd and works with containerd which is used for debugging purposes only and has a very limited set of features, so ideally you wouldn’t be using this at all so you can kind of ignore this. Then we have the `nerdctl` CLI which is again from the containerd community but this is a Docker-like CLI for containerd used for general purpose to create containers and supports the same or more features than Docker CLI, so it’s something that I think we’ll be using a lot more going forward. Then we have the `crictl` utility which is from the Kubernetes community and mainly used to interact with CRI compatible runtimes, so it’s not just for containerd – this can be used for all CRI supported runtimes – again this is mainly to be used for debugging purposes.
 
-![](../../images/02-03-10.png)
+|            |    ctr     |     nerdctl     |           crictl            |
+| :--------: | :--------: | :-------------: | :-------------------------: |
+|  Purpose   | Debugging  | General Purpose |          Debugging          |
+| Community  | containerd |   containerd    |         Kubernetes          |
+| works with | containerd |   containerd    | All CRI Compatible Runtimes |
 
 So if we look at the comparisons here, you can see that `ctr` and `crictl` are used mainly for debugging purposes, whereas the `nerdctl` is used for general purpose. The `ctr` and `nerdctl` are from the containerd community and work with containerd, whereas `crictl` is from the Kubernetes community and works across all CRI compatible runtimes.
 So our labs originally had Docker installed on all the nodes so we used the Docker commands to troubleshoot, but now it’s all containerd so remember to use the `crictl` command instead to troubleshoot.
