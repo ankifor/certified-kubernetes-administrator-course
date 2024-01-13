@@ -2,7 +2,6 @@
 
 ## Other
 ```bash
-alias k=kubectl
 find ./folder-name -type f | xargs tail -n +1
 
 ps -aux | grep kubelet
