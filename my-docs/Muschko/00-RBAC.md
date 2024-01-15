@@ -29,15 +29,16 @@ https://kubernetes.io/docs/reference/kubectl/generated/kubectl_config/kubectl_co
 
 Default ClusterRole
 - cluster-admin: allows read and write access to resources across all namespaces.
-- admin: allows read and write access to resources in namespace including Roles and RoleBindings.
-- edit: allows   read and write access to resources in namespace except Roles and RoleBindings. Provides access to Secrets.
-- view: allows read-only access to resources in namespace except Roles, RoleBindings, and Secrets
+- admin: allows read and write access to resources in all namespaces including Roles and RoleBindings.
+- edit: allows   read and write access to resources in all namespaces except Roles and RoleBindings. Provides access to Secrets.
+- view: allows read-only access to resources in all namespaces except Roles, RoleBindings, and Secrets
 
 
-|         | ClusterRole |         Role         |
-| :-----: | :---------: | :------------------: |
-|  Scope  |   Cluster   |      Namespace       |
-| Objects |     Any     | Only namespaced once |
+|         |    ClusterRole     |         Role         |
+| :-----: | :----------------: | :------------------: |
+|  Scope  |      Cluster       |      Namespace       |
+| Objects |        Any         | Only namespaced once |
+| Binding | ClusterRoleBinding |     RoleBinding      |
 
  
 
@@ -144,33 +145,82 @@ subjects:
 ```bash
 $ k auth can-i --list
 
-Resources                                       Non-Resource URLs   Resource Names   Verbs
-selfsubjectreviews.authentication.k8s.io        []                  []               [create]
-selfsubjectaccessreviews.authorization.k8s.io   []                  []               [create]
-selfsubjectrulesreviews.authorization.k8s.io    []                  []               [create]
-                                                [/api/*]            []               [get]
-                                                [/api]              []               [get]
-                                                [/apis/*]           []               [get]
-                                                [/apis]             []               [get]
-                                                [/healthz]          []               [get]
-                                                [/healthz]          []               [get]
-                                                [/livez]            []               [get]
-                                                [/livez]            []               [get]
-                                                [/openapi/*]        []               [get]
-                                                [/openapi]          []               [get]
-                                                [/readyz]           []               [get]
-                                                [/readyz]           []               [get]
-                                                [/version/]         []               [get]
-                                                [/version/]         []               [get]
-                                                [/version]          []               [get]
-                                                [/version]          []               [get]
-pods                                            []                  []               [list get watch]
-services                                        []                  []               [list get watch]
-deployments.apps                                []                  []               [list get watch]
+Resources                                       Non-Res.URLs Res.Names Verbs
+selfsubjectreviews.authent...      []           []          [create]
+selfsubjectaccessreviews.author... []           []          [create]
+selfsubjectrulesreviews.author...  []           []          [create]
+                                   [/api/*]     []          [get]
+                                   [/api]       []          [get]
+                                   [/apis/*]    []          [get]
+                                   [/apis]      []          [get]
+                                   [/healthz]   []          [get]
+                                   [/healthz]   []          [get]
+                                   [/livez]     []          [get]
+                                   [/livez]     []          [get]
+                                   [/openapi/*] []          [get]
+                                   [/openapi]   []          [get]
+                                   [/readyz]    []          [get]
+                                   [/readyz]    []          [get]
+                                   [/version/]  []          [get]
+                                   [/version/]  []          [get]
+                                   [/version]   []          [get]
+                                   [/version]   []          [get]
+pods                               []           []          [list get watch]
+services                           []           []          [list get watch]
+deployments.apps                   []           []          [list get watch]
 
 ```
 
 
 ```bash 
 $ k auth can-i --list --as minikube
+```
+
+
+## ClusterRole Aggregation
+
+```yaml
+# k create ClusterRole list-pods --resources pods --verbs list
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: list-pods
+  namespace: rbac-example
+  labels:
+    rbac-pod-list: "true"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+############
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: delete-services
+  namespace: rbac-example
+  labels:
+    rbac-service-delete: "true"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - delete
+###############
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pods-services-aggregation-rules
+  namespace: rbac-example
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac-pod-list: "true"
+  - matchLabels:
+      rbac-service-delete: "true"
+rules: []
 ```

@@ -2,6 +2,18 @@
 
 These are notes from the [Certified Kubernetes Administrator Course](https://kodekloud.com/courses/certified-kubernetes-administrator-cka/) hosted on KodeKloud.
 
+# My-Sections
+- [00-ToDo.md](my-docs/00-ToDo.md)
+- [01-LinuxCommands.md](my-docs/01-LinuxCommands.md)
+- [02-QualityOfLife.md](my-docs/02-QualityOfLife.md)
+- [03-Setup_minikube.md](my-docs/03-Setup_minikube.md)
+- [04-K8sCommands.md](my-docs/04-K8sCommands.md)
+- [20-TLS.md](my-docs/20-TLS.md)
+- [21-ETCD.md](my-docs/21-ETCD.md)
+- [Muschko](my-docs/Muschko/)
+  - [00-RBAC.md](my-docs/Muschko/00-RBAC.md)
+
+
 # Sections
 - [00-MyNotes](docs/00-MyNotes)
   - [00-LinuxCommands](docs/00-MyNotes/00-LinuxCommands.md)
