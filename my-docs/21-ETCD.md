@@ -23,7 +23,9 @@ sudo apt-get install -y etcd-client
 
 cd /var/lib/minikube/certs/etcd/
 
-sudo ETCDCTL_API=3 etcdctl --cacert ca.crt --cert server.crt --key server.key --endpoints https://127.0.0.1:2379 get /registry/ --prefix --keys-only
+sudo ETCDCTL_API=3 etcdctl --cacert ca.crt --cert server.crt --key server.key --endpoints https://127.0.0.1:2379 get /registry/ --prefix --keys-only --limit 10
+
+sudo ETCDCTL_API=3 etcdctl --cacert ca.crt --cert peer.crt --key peer.key --endpoints https://127.0.0.1:2379 get /registry/ --prefix --keys-only --limit 10
 
 
 # export ETCDCTL_API=3 
@@ -41,31 +43,12 @@ sudo ETCDCTL_API=3 etcdctl --cacert ca.crt --cert server.crt --key server.key --
 Through etcd-minikube:
 
 ```bash
-k describe po etcd-minikube -n kube-system
+k describe po etcd-minikube -n kube-system | egrep peer
 
-# etcd
-# --advertise-client-urls=https://192.168.49.2:2379
-# --cert-file=/var/lib/minikube/certs/etcd/server.crt
-# --client-cert-auth=true
-# --data-dir=/var/lib/minikube/etcd
-# --experimental-initial-corrupt-check=true
-# --experimental-watch-progress-notify-interval=5s
-# --initial-advertise-peer-urls=https://192.168.49.2:2380
-# --initial-cluster=minikube=https://192.168.49.2:2380
-# --key-file=/var/lib/minikube/certs/etcd/server.key
-# --listen-client-urls=https://127.0.0.1:2379,https://192.168.49.2:2379
-# --listen-metrics-urls=http://127.0.0.1:2381
-# --listen-peer-urls=https://192.168.49.2:2380
-# --name=minikube
 # --peer-cert-file=/var/lib/minikube/certs/etcd/peer.crt
 # --peer-client-cert-auth=true
 # --peer-key-file=/var/lib/minikube/certs/etcd/peer.key
 # --peer-trusted-ca-file=/var/lib/minikube/certs/etcd/ca.crt
-# --proxy-refresh-interval=70000
-# --snapshot-count=10000
-# --trusted-ca-file=/var/lib/minikube/certs/etcd/ca.crt
-
-# Needed are: --peer-cert-file, --peer-key-file, --peer-trusted-ca-file
 
 
 k exec -it etcd-minikube -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl get / --prefix --keys-only --limit=10 --cacert /var/lib/minikube/certs/etcd/ca.crt --cert /var/lib/minikube/certs/etcd/peer.crt  --key /var/lib/minikube/certs/etcd/peer.key" 

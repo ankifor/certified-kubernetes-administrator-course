@@ -86,3 +86,125 @@ https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-clu
 scp root@<control-plane-host>:/etc/kubernetes/admin.conf .
 kubectl --kubeconfig ./admin.conf get nodes
 ```
+
+## High availability cluster
+
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/
+ETCD can either be colocated with the control plane (stacked), or run separately
+
+Use `kubeadm join --control-plane` create a new control plane instance on current node (by default creates an ETCD instance).
+- More instructions: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/
+- Odd number of nodes for easier leader selection
+- The difference between stacked etcd and external etcd here is that the external etcd setup requires a configuration file with the etcd endpoints under the external object for etcd. In the case of the stacked etcd topology, this is managed automatically.
+
+
+
+```bash
+preflight              Run join pre-flight checks
+control-plane-prepare  Prepare the machine for serving a control plane
+  /download-certs        [EXPERIMENTAL] Download certificates shared among control-plane nodes from the kubeadm-certs Secret
+  /certs                 Generate the certificates for the new control plane components
+  /kubeconfig            Generate the kubeconfig for the new control plane components
+  /control-plane         Generate the manifests for the new control plane components
+kubelet-start          Write kubelet settings, certificates and (re)start the kubelet
+control-plane-join     Join a machine as a control plane instance
+  /etcd                  Add a new local etcd member
+  /update-status         Register the new control-plane node into the ClusterStatus maintained in the kubeadm-config ConfigMap (DEPRECATED)
+  /mark-control-plane    Mark a node as a control-plane
+```
+
+### Stacked etcd topology
+- simpler to set up
+- etcd communicate only with the apiserver
+- control plane and respective etcd fail simultaneously
+- min 3 control planes
+![Alt text](../../images/01-ClusterCreation/image-1.png)
+
+
+### Separate ETCD
+- loosing a control plane node has less impact
+- twice the number of hosts
+- min 3 control planes and 3 etcd nodes
+
+![Alt text](../../images/01-ClusterCreation/image-2.png)
+
+
+## Upgrading Cluster version
+- Upgarde from one minor version to a next one (or to a higher patch), e.g. 1.18 to 1.19. Avoid jumping over minor versions
+- https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+
+
+![Alt text](../../images/01-ClusterCreation/image-3.png)
+
+### Uograde control plane
+```bash
+# uodate sources as described here
+# [/etc/apt/sources.list.d/](https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/#how-to-migrate-deb)
+$ sudo apt update
+# https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+$ sudo apt-cache madison kubeadm
+
+
+# apt-mark unhold prevents the package from being automatically installed, upgraded or removed
+$ sudo apt-mark unhold kubeadm && \
+    sudo apt-get update && \
+    sudo apt-get install -y kubeadm='1.19.0-00' && \
+    sudo apt-mark hold kubeadm
+
+# verify the version
+$ kubeadm version 
+
+# chooses the latest upgradable version (or we stick to our version)
+# it may ask to upgrade kubeadm to this version
+$ kubeadm upgrade plan
+
+# it may also be needed to upgrade NCI
+$ sudo kubeadm upgrade apply v1.29.0
+
+$ kubectl drain kube-control-plane --ignore-daemonsets
+
+# upgrade kubelet and kubectl
+$ sudo apt-mark unhold kubelet kubectl && \
+    sudo apt-get update && \
+    sudo apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00 && \
+    sudo apt-mark hold kubelet kubectl
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart kubelet
+
+$ kubectl uncordon kube-control-plane
+
+# verify
+$ kubectl get nodes
+```
+
+
+### Upgrade a worker node
+```bash
+$ sudo apt-mark unhold kubeadm && \
+    sudo apt-get update && \
+    sudo apt-get install -y kubeadm=1.19.0-00 && \ 
+    sudo apt-mark hold kubeadm
+
+$ sudo kubeadm upgrade node
+
+# View kubeadm config
+# kubectl -n kube-system get cm kubeadm-config -o yaml
+
+$ kubectl drain kube-worker-1 --ignore-daemonsets
+
+$ sudo apt-mark unhold kubelet kubectl && \
+    sudo apt-get update && \
+    sudo apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00 && \
+    sudo apt-mark hold kubelet kubectl
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart kubelet
+
+$ kubectl uncordon kube-worker-1
+
+# go to the cluster and verify the version
+# or run kubectl from the worker, if 
+# admin.conf  is there
+$ kubectl get nodes
+```

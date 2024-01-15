@@ -1,6 +1,7 @@
 # ToDos
 
 - Installation via kubeadm --> try with kodecloud
+- Try upgrading the cluster 
 - try `tr` command
 
 * EncryptionConfiguration
