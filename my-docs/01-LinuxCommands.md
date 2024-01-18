@@ -1,6 +1,6 @@
-# Linux Commands
 
-## Other
+
+# Other
 ```bash
 find ./folder-name -type f | xargs tail -n +1
 
@@ -15,7 +15,7 @@ cat -n
 echo -n "paswrd"| base64
 echo -n "bX1zcWw=" | base64 --decode
 ```
-## GREP and AWK
+# GREP and AWK
 
 ```bash
 grep -o -E ".{200}gespeichert.{50}" 2023-11-28.log
@@ -43,11 +43,11 @@ jq ' map( select(.thread | test("Hikari") | not))' y.log > w.log
 date -d"2023-12-18T13:23" +%s
 ```
 
-## Openshift
+# Openshift
 
 ```bash
 oc get pods -o=name -n ubreg-dev | grep bzst
-oc exec --stdin --tty -- /bin/bash
+oc exec --stdin --tty $POD -- /bin/bash
 
 oc config view | grep namespace
 alias ocns-set='oc config set-context --current --namespace'
@@ -63,39 +63,11 @@ oc cp dateneingang-datenempfang-bzst-deployment-84858cbdb7-s9mqg:tmp/log/datenei
 oc cp dateneingang-datenempfang-bzst-deployment-5f45967c8c-pd2ns:etc/ssl/certs/truststore.p12 ./x.p12
 ```
 
-## Certs
-```bash
-openssl req -in csr.csr -noout -text
-openssl x509 -in certificate.crt -text -noout
-openssl x509 -inform der -in CERTIFICATE.der -text -noout
-
-openssl pkcs12 -in truststore_old.p12 -clcerts -nokeys -out publicCert.pem
-
-
-certutil -encodehex keytab_nikiforov-a 1.txt 0x40000001
-certutil -encode keytab_nikiforov-a 1.txt
-certutil -decode 1.txt 3.txt
-certutil -p pw -dump keystore.p12 > key.txt
-
-openssl req -new -config ./openssl-server-certificates-etu.conf -key private-etu.key -out ubreg-etu-k8s-tls-csr.csr
-openssl req -new -config ./openssl-server-certificates-vpu.conf -key private-vpu.key -out ubreg-vpu-k8s-tls-csr.csr
-openssl req -new -config ./openssl-server-certificates-pru.conf -key private-pru.key -out ubreg-pru-k8s-tls-csr.csr
-
-
-openssl pkcs12 -info -in x.p12 -passin pass:x | grep -E "(subject|issuer)"
-
-
-openssl pkcs12 -export -nokeys -out truststore_new.p12 -in 0_tobi-sein-zertifikat.pem -in 0_widnr_dabas-technical-dev.pem -in rootca.pem
-
-
-"C:\Program Files (x86)\Java\JRE\1.8.0_371\bin\keytool.exe" -import -file 0.pem -alias firstCA -keystore truststore_new.p12 -storetype PKCS12
-
-```
-
-## CURL
+# CURL
 
 ```bash
 curl --parallel --parallel-immediate --parallel-max 3 http://frontend-monorepo-benchmark.workload.stba-e2.stba.cloud.intranet.bund.de/login
+
 seq 1 20000 | xargs -n 1 -P 20 curl -Z -so --parallel-immediate "http://frontend-monorepo-benchmark.workload.stba-e2.stba.cloud.intranet.bund.de/login"
 
 
@@ -103,35 +75,16 @@ curl -v --cacert cacerts.pem --cert-type P12 --cert widnr_dabas-technical-dev.p1
 
 ```
 
-## Kafka
+
+
+# When no binaries on the machine
 ```bash
-Kafka1-in.entw.rubd.stba.itzbund.net / 10.133.25.42
-Kafka2-in.entw.rubd.stba.itzbund.net / 10.133.25.43
-Kafka3-in.entw.rubd.stba.itzbund.net / 10.133.25.44
+# print file
+echo $(</var/lib/minikube/certs/etcd/ca.crt)
+
+# no ls
+cd /to/dir
+echo *
 
 
-
-# https://docs.confluent.io/cloud/current/access-management/authenticate/oauth/access-rest-apis.html
-
-curl -X GET \
--H "Content-Type: application/vnd.kafka.binary.v2+json" \
--H "kafka.security.protocol: SASL_PLAINTEXT" \
--H "kafka.sasl.kerberos.service.name: kafka" \
--H "kafka.sasl.jaas.config: com.sun.security.auth.module.Krb5LoginModule required useTicketCache=true
-serviceName=\"kafka\" useKeyTab=true keyTab=\"/home/user/keytab\"
-principal=\"stba-rubd-etu_srv_caas_messaging@IAM.STBA\";" \
-http://kafka1-in.entw.rubd.stba.itzbund.net/topics \
--w "%{http_code}"
-
-
-curl -X POST \
--H "Content-Type: application/vnd.kafka.binary.v2+json" \
--H "kafka.security.protocol: SASL_PLAINTEXT" \
--H "kafka.sasl.kerberos.service.name: kafka" \
--H "kafka.sasl.jaas.config: com.sun.security.auth.module.Krb5LoginModule required useTicketCache=true
-serviceName=\"kafka\" useKeyTab=true keyTab=\"/home/user/keytab\"
-principal=\"stba-rubd-etu_srv_caas_messaging@IAM.STBA\";" \
-http://kafka1-in.entw.rubd.stba.itzbund.net:9093/topics/caas_test \
---data '{"records":[{"key":"foo","value":"bar"}]}' \
--w "\n%{http_code}\n"
 ```

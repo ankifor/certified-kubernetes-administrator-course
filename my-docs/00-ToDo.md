@@ -1,8 +1,15 @@
 # ToDos
 
 - Installation via kubeadm --> try with kodecloud
+- why is etcd a pod????
+- try restore
 - Try upgrading the cluster 
 - try `tr` command
+- get familiar with search on kubernetes website
+  - installation of kubeadm and cluster
+
+- O'Reilly book Network Security with OpenSSL
+
 
 * EncryptionConfiguration
 * Self-healing applications

@@ -208,3 +208,15 @@ $ kubectl uncordon kube-worker-1
 # admin.conf  is there
 $ kubectl get nodes
 ```
+
+
+# ETCD Backup & Restore
+
+## Installation
+- https://github.com/etcd-io/etcd/releases
+
+
+## Backup
+
+
+![Alt text](../../images/01-ClusterManage/image.png)
