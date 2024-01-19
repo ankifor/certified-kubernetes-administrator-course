@@ -104,3 +104,6 @@ $ curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X POST ${AP
 
 ```
 
+# Selectors 
+
+See [REST API in 23-Labels](./23-labels.md#rest-api)

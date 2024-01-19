@@ -18,10 +18,11 @@ echo -n "bX1zcWw=" | base64 --decode
 # GREP and AWK
 
 ```bash
-grep -o -E ".{200}gespeichert.{50}" 2023-11-28.log
-grep -o -E ".{20}POST.{100}" 2023-11-28.log
-grep -o -E ".{20}POST.{100}" 2023-12-01.log
-grep -o -E ".{20}GET.{100}" 2023-12-01.log
+PODNAME=$(k get -n default pods | grep myapp | awk '{print $1}' | head -n1)
+
+PODNAME=$(k get pods -o jsonpath="{.items[0].metadata.name}")
+
+
 
 # surronding 10 lines
 grep -C 10 "..."

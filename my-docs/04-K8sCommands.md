@@ -1,13 +1,4 @@
-# Kubernetes Commands
-- [Kubernetes Commands](#kubernetes-commands)
-  - [Kubectl gets](#kubectl-gets)
-  - [Other](#other)
-  - [Certificates](#certificates)
-  - [Connect to node](#connect-to-node)
-  - [Kubelet](#kubelet)
-
-
-## Namespace and Alias
+# Namespace and Alias
 ```bash
 kubectl config set-context <context-of-question> --namespace=<namespace-of-question>
 kubectl config use-context <context-of-question>
@@ -21,10 +12,13 @@ kubectl api-resources
 
 
 
-## Kubectl gets
+# Kubectl gets
 ```bash
 k get pods 
 k describe pod myapp-pod
+k get pod myapp-pod -o yaml
+
+
 
 k get replicationcontroller
 k get replicaset
@@ -37,19 +31,19 @@ k get configmaps
 k get secrets
 k get all
 
+# namespace
 k get pod --all-namespaces
 k get pod -A
-
-k get pod --namespace=dev
 k get pod -n=dev
+
 k get pod --watch #monitor changes
 k get pod -o=wide
-k get pods --selector app=App1
-k get pods --show-labels
-k get pod --selector env=dev
-k get all --selector env=dev
 
 
+```
+
+## JSONPath
+```bash
 # https://kubernetes.io/docs/reference/kubectl/jsonpath/
 k get pods -o json
 k get pods -o=jsonpath='{@}'
@@ -60,21 +54,37 @@ k get pods -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.startTim
 k get pods -o=jsonpath='{.items[0].metadata.labels.kubernetes\.io/hostname}'
 ```
 
-## Information
+
+## Selecting multiple kinds by labels
+```bash
+$ k get deploy,rs,po -l app=myapp --show-labels 
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE    LABELS
+deployment.apps/myapp   2/2     2            2           5d6h   app=myapp
+
+NAME                               DESIRED   CURRENT   READY   AGE    LABELS
+replicaset.apps/myapp-7d5cf6cbb9   2         2         2       5d6h   app=myapp,pod-template-hash=7d5cf6cbb9
+
+NAME                         READY   STATUS    RESTARTS        AGE    LABELS
+pod/myapp-7d5cf6cbb9-8stfq   1/1     Running   7 (7h58m ago)   5d6h   app=myapp,pod-template-hash=7d5cf6cbb9
+pod/myapp-7d5cf6cbb9-hkr8h   1/1     Running   7 (7h58m ago)   5d6h   app=myapp,pod-template-hash=7d5cf6cbb9
+
+```
+
+# Information
 
 ```
 k explain pods.spec
 ```
 
 
-## Resource deletion
+# Resource deletion
 ```bash
 # do not wait!!
 k delete pod nginx --force 
 ```
 
 
-## Other
+# Other
 ```bash
 k exec etcd-master -n kube-system etcdctl get / --prefix -key
 
@@ -160,7 +170,7 @@ k config use-context cluster1
 
 ```
 
-## Certificates
+# Certificates
 ```bash
 # generate Keys: 
 openssl genrsa -out ca.key 2048
@@ -169,7 +179,7 @@ openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 #Sign certificates: 
 openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
 ```
-## Connect to node
+# Connect to node
 ```bash
 k exec -it <pod> -- /bin/bash
 ###
@@ -180,7 +190,7 @@ scp cluster1-controlplane:/opt/cluster1.db /opt/cluster1.db
 ```
 
 
-## Kubelet
+# Kubelet
 
 ```bash
 
