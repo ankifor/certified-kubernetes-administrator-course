@@ -1,0 +1,25 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: app-cache
+  namespace: default
+spec:
+  minReplicas: 3
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        averageValue: 300Mi
+        type: AverageValue
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app-cache

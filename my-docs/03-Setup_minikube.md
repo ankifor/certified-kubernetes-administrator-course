@@ -57,3 +57,26 @@ dpkg -i minikube_latest_amd64.deb
 minikube config set driver docker
 minikube start
 ```
+
+# Metrics Server
+https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#before-you-begin
+
+`minikube addons enable metrics-server`
+
+`kubectl get apiservices | grep metrics` should return  `v1beta1.metrics.k8s.io`
+
+
+`minikube dashboard` makes metrics available
+
+
+
+Pods should contain resource requests:
+```yaml
+    resources:
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 250m
+        memory: 100Mi
+```
