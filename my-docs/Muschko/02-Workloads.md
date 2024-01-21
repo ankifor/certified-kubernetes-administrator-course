@@ -318,3 +318,8 @@ pod/web-0   1/1     Running   0          5m50s
 pod/web-1   1/1     Running   0          5m30s
 pod/web-2   1/1     Running   0          5m10s
 ```
+
+
+
+
+

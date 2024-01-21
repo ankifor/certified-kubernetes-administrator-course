@@ -88,4 +88,8 @@ cd /to/dir
 echo *
 
 
+# input from file to var:
+NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+NAMESPACE=$(</var/run/secrets/kubernetes.io/serviceaccount/namespace)
+
 ```

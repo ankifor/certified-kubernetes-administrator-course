@@ -8,7 +8,7 @@
 - try `tr` command
 - get familiar with search on kubernetes website
   - installation of kubeadm and cluster
-
+- rollouts on deployment (strategies?)
 
 - Know how to define RBAC rules. 
   - Defining RBAC rules involves a couple of moving parts: the subject defined by users, groups, and ServiceAccounts; the RBAC-specific API resources on the namespace and cluster level; and, finally, the verbs that allow the corresponding operations on the Kubernetes objects. Practice the creation of subjects, and how to tie them together to form the desired access rules. Ensure that you verify the correct behavior with different constellations.

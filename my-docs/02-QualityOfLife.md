@@ -1,6 +1,4 @@
-# Quality of Life
-
-## Alias and Completion
+# Alias and Completion
 ```bash
 # if minikube https://minikube.sigs.k8s.io/docs/handbook/kubectl/
 alias kubectl="minikube kubectl --" 
