@@ -149,7 +149,7 @@ REVISION  CHANGE-CAUSE
 See also [setup minikube](../03-Setup_minikube.md#metrics-server)
 
 
-**Note**: describe may show strange errors / warnings / metric values at the beginning, but later it gets normal. I guess, it might depend on metrics-server and its refreshing rate (60s in my case).
+**Note**: metric server may take time to gather metrics (60s in my case is a refresh rate). Before it might show a warning/error. By memory it might show big `m` value (stays for milli).
 
 ```yaml
 $ kubectl autoscale deployment app-cache --cpu-percent=80 --min=3 --max=5 --dry-run=client -o yaml
@@ -202,7 +202,17 @@ Another option:
     target:
       type: AverageValue
       averageValue: 500Mi
+# or
+- type: Resource
+  resource:
+    name: memory
+    target:
+      type: Utilization
+      averageUtilization: 70
 ```
+
+
+
 
 
 

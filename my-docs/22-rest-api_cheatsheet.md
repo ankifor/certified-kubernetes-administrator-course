@@ -38,6 +38,10 @@ client-key: /home/andrey/.minikube/profiles/minikube/client.key
 # Run curl with certs
 
 ```bash
+# check config for certs:
+k config view
+
+
 curl --cacert ~/.minikube/ca.crt --cert ~/.minikube/profiles/minikube/client.crt --key ~/.minikube/profiles/minikube/client.key -X GET https://192.168.49.2:8443/api/v1/namespaces/rm/pods
 
 ```
@@ -53,6 +57,29 @@ Starting to serve on 127.0.0.1:8001
 curl -X GET http://127.0.0.1:8001/api/v1/namespaces/rm/pods
 ```
 
+# Run curl with a token
+https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#without-kubectl-proxy
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: default-token
+  annotations:
+    kubernetes.io/service-account.name: default
+type: kubernetes.io/service-account-token
+EOF
+```
+
+```bash
+# wait for creation...
+TOKEN=$(kubectl get secret default-token -o jsonpath='{.data.token}' | base64 --decode)
+curl -X GET $APISERVER/api --header "Authorization: Bearer $TOKEN" --cacert ~/.minikube/ca.crt
+```
+
+
+
 # From a pod
 https://kubernetes.io/docs/tasks/run-application/access-api-from-pod/
 
@@ -64,15 +91,26 @@ default       kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP       
 kube-system   kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   5d14h
 ```
 
-Run in a pod:
+To find the location of a token, check pod specification:
+```yaml
+    volumeMounts:
+    ...
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-lh2xx
+      readOnly: true
+```
+
 ```bash
 $ ls /var/run/secrets/kubernetes.io/serviceaccount
 ca.crt	namespace  token
 ```
 
 
+
+
 ```bash
-APISERVER=https://kubernetes.default.svc
+# APISERVER=https://kubernetes.default.svc
+APISERVER=https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT_HTTPS
 SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
 NAMESPACE=$(<${SERVICEACCOUNT}/namespace)
 TOKEN=$(<${SERVICEACCOUNT}/token)

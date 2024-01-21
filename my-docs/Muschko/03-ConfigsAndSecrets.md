@@ -102,6 +102,7 @@ spec:
   - name: config
     configMap:
       name: game-demo
+      # .items are optional
       items:
       - key: "game.properties"
         path: "game.properties"
@@ -264,4 +265,57 @@ spec:
     - name: ssh-volume
       secret:
         secretName: secret-ssh-auth
+        # optional .items
+        items:
+        - key: username
+          path: my-group/my-username        
+```
+
+
+
+# Summary
+
+## Injection as env
+
+- via `.spec.containers[].envFrom`
+```yaml
+envFrom:
+- secretRef / configMapRef:
+  name: secret-basic-auth
+```
+
+- `.spec.containers[].env`
+```yaml
+env:
+- name: USERNAME 
+  valueFrom:
+    secretKeyRef / configMapKeyRef:
+      name: secret-basic-auth           
+      key: username
+```
+
+
+
+## Injection via Mounts as Files
+
+- `.spec.containers[].volumeMounts` do
+
+```yaml
+volumeMounts:
+- name: ssh-volume
+  mountPath: /var/app
+  readOnly: true
+```
+
+- AND `.spec.volumes` do
+
+```yaml
+volumes:
+- name: ssh-volume
+  secret / configMap:
+    secretName / name: secret-ssh-auth
+    # optional .items
+    items:
+    - key: username
+      path: my-group/my-username        
 ```
