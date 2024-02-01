@@ -27,23 +27,24 @@ disposable   1/1     Running   0          33m
 ``` 
 
 
-in /home/andrey/.kube/config:
-```
-certificate-authority: /home/andrey/.minikube/ca.crt
-...
-client-certificate: /home/andrey/.minikube/profiles/minikube/client.crt
-client-key: /home/andrey/.minikube/profiles/minikube/client.key
+Certs location:
+```bash
+$ k config view | egrep "(client|ca)"
+
+    certificate-authority: /home/andrey/.minikube/ca.crt
+
+    client-certificate: /home/andrey/Projects/playground-k8s/users/certs/johndoe.crt
+    client-key: /home/andrey/Projects/playground-k8s/users/certs/johndoe.key
+
+    client-certificate: /home/andrey/.minikube/profiles/minikube/client.crt
+    client-key: /home/andrey/.minikube/profiles/minikube/client.key
+
 ```
 
 # Run curl with certs
 
 ```bash
-# check config for certs:
-k config view
-
-
 curl --cacert ~/.minikube/ca.crt --cert ~/.minikube/profiles/minikube/client.crt --key ~/.minikube/profiles/minikube/client.key -X GET https://192.168.49.2:8443/api/v1/namespaces/rm/pods
-
 ```
 
 # Run curl via proxy
@@ -51,10 +52,8 @@ kubectl proxy is a server that handles certificates for us, so that we don’t n
 ```bash
 $ k proxy &
 Starting to serve on 127.0.0.1:8001
-```
 
-```bash
-curl -X GET http://127.0.0.1:8001/api/v1/namespaces/rm/pods
+$ curl -X GET http://127.0.0.1:8001/api/v1/namespaces/rm/pods
 ```
 
 # Run curl with a token

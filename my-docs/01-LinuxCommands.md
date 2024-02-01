@@ -93,3 +93,53 @@ NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 NAMESPACE=$(</var/run/secrets/kubernetes.io/serviceaccount/namespace)
 
 ```
+
+# HEREDOC
+https://linuxize.com/post/bash-heredoc/
+
+```bash
+cat << EOF
+The current working directory is: $PWD
+You are logged in as: $(whoami)
+EOF
+```
+
+Using `<<-` removes all leading spaces and tabs from the input
+```bash
+if true; then
+    cat <<- EOF
+    Line with a leading tab.
+    EOF
+fi
+
+```
+
+Any delimiter may be used, not only `EOF`
+```bash
+cat <<- something
+...
+something
+```
+
+Adding quotes to the delimiter prevents env vars from expanding
+```bash
+cat <<- "EOF"
+The current working directory is: $PWD
+You are logged in as: $(whoami)
+EOF
+```
+
+It workds with piping and redirection
+```bash
+cat <<'EOF' |  sed 's/l/e/g' > file.txt
+Hello
+World
+EOF
+
+
+ssh -T user@host.com << EOF
+echo "The current local working directory is: $PWD"
+echo "The current remote working directory is: \$PWD"
+EOF
+
+```
