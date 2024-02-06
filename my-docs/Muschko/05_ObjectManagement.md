@@ -11,82 +11,65 @@
 # Kustomize
 - https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/
 - https://github.com/kubernetes-sigs/kustomize
+- https://github.com/kubernetes-sigs/kustomize/tree/master/examples/transformerconfigs
 
 - a tool in Kubernetes from 1.14
 - Use cases:
-  - generating manifests (e.g. generate a `ConfigMap` from a properties file)
-  - Adding common configuration across multiple manifests. For example, adding a namespace and a set of labels for a Deployment and a Service.
-  - Composing and customizing a collection of manifests. For example, setting resource boundaries for multiple Deployments.
+  - generating manifests (e.g. generate a `ConfigMap` from a properties file). See [Example 1](./00-exercises/ex_chapter4/kust/example1/)
+  - Adding common configuration across multiple manifests. For example, adding a namespace and a set of labels for a Deployment and a Service. See [Example 2](./00-exercises/ex_chapter4/kust/example2/)
+  - Composing and customizing a collection of manifests. For example, setting resource boundaries for multiple Deployments. See [Example 3](./00-exercises/ex_chapter4/kust/example3/) and [Example 4](./00-exercises/ex_chapter4/kust/example4/)
+  - [Example 5](./00-exercises/ex_chapter4/kust/example5/) Replacements of vars
+  - [Example 6](./00-exercises/ex_chapter4/kust/example6/) Base and overlays
 
 - Execution modes
   - render processing output `kubectl kustomize <target>` (works like `--dry-run=client`)
   - create objects `kubectl apply -k <target>`
+  - view created objects: `kubectl get -k <target>`
+  - also works with `describe`, `delete` and `diff`
 
-## Example 1
-
+- Feature list: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#kustomize-feature-list
+  - namespace
+  - commonLabels
+  - commonAnnotations
+  - bases
+  - vars
+  - images 
 ```yaml
-.
-├── config
-│   ├── db-config.properties
-│   └── db-secret.properties
-├── kustomization.yaml
-└── web-app-pod.yaml
+images:
+  - name: postgres
+    newName: my-registry/my-postgres
+    newTag: v1
+  - name: nginx
+    newTag: 1.8.0
+  - name: my-demo-app
+    newName: my-app
+  - name: alpine
+    digest: sha256:25a0d4
 ```
-
+  - configurations: they may change behaviour of features (more here https://github.com/kubernetes-sigs/kustomize/tree/master/examples/transformerconfigs)
 ```yaml
-configMapGenerator:
-- name: db-config
-  files:
-  - config/db-config.properties
-secretGenerator:
-- name: db-creds
-  files:
-  - config/db-secret.properties
+#kustomization.yaml
+namePrefix:
+  alices-
+nameSuffix:
+  -v2
 resources:
-- web-app-pod.yaml
+- resources.yaml
+configurations:
+- namePrefix-config.yaml
 ```
-
-Result: create `configmap`, `secret` and reference them in the `pod`.
-
-## Example 2
 
 ```yaml
-namespace: persistence
-commonLabels:
-  team: helix
-resources:
-- web-app-deployment.yaml
-- web-app-service.yaml
+#namePrefix-config.yaml
+namePrefix:
+- path: metadata/name
 ```
 
-Result: added label to the mentioned resources (also to `selector` / `matchLabels`)
-
-## Example 3
 
 
-```yaml
-resources:
-- nginx-deployment.yaml
-patchesStrategicMerge:
-- security-context.yaml
-```
 
-Patch file. At runtime, the patch strategy tries to find the container named nginx and enhances the additional configuration.
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  template:
-  spec:
-    containers:
-    - name: nginx
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-```
+
+
 
 # yq
 - https://github.com/mikefarah/yq (not the one from `apt`)

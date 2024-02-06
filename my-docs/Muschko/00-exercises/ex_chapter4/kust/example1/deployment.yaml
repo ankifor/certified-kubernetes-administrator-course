@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: app
+        image: my-app
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        envFrom:
+        - configMapRef:
+            name: cm-envs
+        env:
+        - name: Foo3 
+          valueFrom:
+            configMapKeyRef:
+              name: cm-literals
+              key: Foo3
+
+      volumes:
+      - name: config
+        configMap:
+          name: cm-files

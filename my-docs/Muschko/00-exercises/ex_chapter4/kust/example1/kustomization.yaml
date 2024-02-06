@@ -1,0 +1,18 @@
+configMapGenerator:
+- name: cm-envs
+  envs:
+  - application.properties
+- name: cm-files
+  files:
+  - application.properties
+- name: cm-literals
+  literals:
+  - Foo2=Bar2
+resources:
+- deployment.yaml
+generatorOptions:
+  #disableNameSuffixHash: true
+  labels:
+    type: generated
+  annotations:
+    note: generated

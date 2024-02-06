@@ -21,7 +21,6 @@ env:
 - `--from-file=config-dir` A directory with one or many files
  
 
-
 ```bash
 $ kubectl create configmap db-config --from-literal=DB_HOST=mysql-service --from-literal=DB_USER=backend --dry-run=client -o yaml
 
@@ -33,6 +32,14 @@ data:
   DB_HOST: mysql-service
   DB_USER: backend
 ```
+## Updating config maps
+https://github.com/kubernetes-sigs/kustomize/blob/master/examples/configGeneration.md
+Changing the data held by a live ConfigMap in a cluster is considered bad practice. Deployments have no means to know that the ConfigMaps they refer to have changed, so such updates have no effect.
+
+The recommended way to change a deployment's configuration is to
+- create a new ConfigMap with a new name,
+- patch the deployment, modifying the name value of the appropriate configMapKeyRef field.
+
 
 ## Injection of ConfigMaps
 - `.spec.containers[].envFrom`
@@ -281,7 +288,7 @@ spec:
 ```yaml
 envFrom:
 - secretRef / configMapRef:
-  name: secret-basic-auth
+    name: secret-basic-auth
 ```
 
 - `.spec.containers[].env`
