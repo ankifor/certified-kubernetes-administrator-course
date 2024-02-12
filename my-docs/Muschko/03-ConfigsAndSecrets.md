@@ -10,6 +10,23 @@ env:
   value: "150"
 ```
 
+You can reference other manifest fields in the env:
+```yaml
+env:
+- name: POD_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
+- name: POD_NAMESPACE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.namespace    
+```
+`fieldRef`: Selects a field of the pod: supports `metadata.name`, `metadata.namespace`, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`, `spec.nodeName`, `spec.serviceAccountName`, `status.hostIP`, `status.podIP`, `status.podIPs`.
+
+
+
+
 
 # ConfigMap
 

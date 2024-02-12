@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: ingress-controller
+  name: ingress-controller
+  namespace: chapter4
+spec:
+  containers:
+  - image: bitnami/nginx-ingress-controller:1.0.0
+    name: ingress-controller
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 1000m
+      limits:
+        memory: 1024Mi
+        cpu: 2500m
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace        
+  dnsPolicy: ClusterFirst
+
+
+
+# F0212 10:38:55.590909       1 main.go:123] Unexpected error obtaining ingress-nginx pod: unable to get POD information: pods "ingress-controller" is forbidden: User "system:serviceaccount:default:default" cannot get resource "pods" in API group "" in the namespace "default"
+# k get pods -n chapter4 ingress-controller -o jsonpath="{.spec.nodeName}" > node.txt

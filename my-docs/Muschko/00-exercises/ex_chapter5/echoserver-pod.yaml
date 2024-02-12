@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: echoserver
+  name: echoserver
+  namespace: chapter5
+spec:
+  containers:
+  - image: k8s.gcr.io/echoserver:1.10
+    name: echoserver
+    ports:
+    - containerPort: 8080
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never

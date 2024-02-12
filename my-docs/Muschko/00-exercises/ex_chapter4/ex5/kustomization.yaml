@@ -1,0 +1,6 @@
+#kind: Kustomization
+#apiVersion: configuration.k8s.io/v1beta1
+resources:
+- nginx-pod.yaml
+- t012-ns.yaml
+namespace: t012

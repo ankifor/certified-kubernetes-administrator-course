@@ -13,6 +13,8 @@
 
 - Scheduling https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
 
+- service types https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+
 - train yq (merging)
 
 - Know how to define RBAC rules. 
