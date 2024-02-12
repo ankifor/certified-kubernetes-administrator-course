@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    run: echoserver
+    app: echoserver
   name: echoserver
   namespace: chapter5
 spec:

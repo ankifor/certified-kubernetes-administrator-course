@@ -91,6 +91,8 @@ k exec etcd-master -n kube-system etcdctl get / --prefix -key
 k exec etcd-master -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl get / --prefix --keys-only --limit=10 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt  --key /etc/kubernetes/pki/etcd/server.key" 
 
 
+kubectl run tmp --image=busybox --restart=Never -it --rm -- wget echoserver-clusterip.chapter5.svc.cluster.local:80 --timeout=5 --tries=1
+
 
 docker ps
 

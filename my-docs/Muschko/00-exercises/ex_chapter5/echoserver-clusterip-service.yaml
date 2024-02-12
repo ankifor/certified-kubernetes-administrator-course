@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: echoserver
-  name: echoserver
+  name: echoserver-clusterip
   namespace: chapter5
 spec:
   ports:

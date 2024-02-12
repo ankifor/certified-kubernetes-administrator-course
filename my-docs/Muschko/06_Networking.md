@@ -122,17 +122,86 @@ machine, illustrated by the following wget command:
 ![ClusterIP](../../images/06_Networking/image-3.png)
 
 
+
 ```bash
-$ kubectl run tmp --image=busybox --restart=Never -it --rm -n chapter5 -- wget 10.106.223.154:80
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -n chapter5 -- wget 10.106.223.154:80 --timeout=5 --tries=1
 Connecting to 10.106.223.154:80 (10.106.223.154:80)
 saving to 'index.html'
 index.html           100% |********************************|   431  0:00:00 ETA
 'index.html' saved
 pod "tmp" deleted
+
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -- wget echoserver-clusterip.chapter5.svc.cluster.local --timeout=5 --tries=1
+# also works
 ```
 
 ## ServiceType NodePort
 
-Exposes access through the node’s IP address and can be resolved from outside of the Kubernetes cluster.
+- Exposes access through the node’s IP address and can be resolved from outside of the Kubernetes cluster.
+- ports 30000-32767, assigned automatically at service creation
+- This port is opened on every node in the cluster, and its value is global and unique at the cluster-scope level
+- `NodePort` (serviceType) vs `nodePort` (port number)
+- See example [echoserver-nodePort-service.yaml](./00-exercises/ex_chapter5/echoserver-nodePort-service.yaml)
+  - `.spec.ports[0].nodePort` is set to 30735 while `.spec.ports[0].port` is defined by us as 5005. `.spec.clusterIP` is `10.100.207.103`
+  - 5005 is visible to the cluster: 
+  - `kubectl run tmp --image=busybox --restart=Never -it --rm -- wget 10.105.80.38:5005`
+  - using the service dns does not work!
+  - 30735 is visible to the externals: 
+  - `wget 192.168.49.2:30479 --timeout=5 --tries=1` (to get the ip: `k describe node minikube | grep InternalIP`)
+
+**Note**: troubleshot bad services by inspecting endpoints. Example of not connected service:
+```bash
+$ k get endpoints -n chapter5 echoserver-clusterip -o yaml
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:´
+    endpoints.kubernetes.io/last-change-trigger-time: "2024-02-12T21:46:48Z"
+  creationTimestamp: "2024-02-12T21:46:48Z"
+  labels:
+    app: echoserver
+  name: echoserver-clusterip
+  namespace: chapter5
+  resourceVersion: "149989"
+  uid: 6a85e7a6-f85a-4dd5-9484-c36acb59acff
+```
+
 
 ![NodePort](../../images/06_Networking/image-4.png)
+
+
+## ServiceType Loadbalancer
+- exposes a single IP
+- loadbalancing strategy is up to the external LB
+- also not callable via dns
+- See [echoserver-lb-service.yaml](./00-exercises/ex_chapter5/echoserver-lb-service.yaml/)
+
+![LoadBalancer](../../images/06_Networking/image-5.png)
+
+
+- Testing in minikube
+  - https://minikube.sigs.k8s.io/docs/handbook/accessing/#run-tunnel-in-a-separate-terminal
+  - Run in a separate terminal (it's an LB) `minikube tunnel` (may also ask for a pw)
+  - not the lb service should get the external ip: `10.100.156.198`
+  - now `wget 10.100.156.198:5005`
+  - it lb also provides the `nodePort`, so that `wget 192.168.49.2:30209` is working
+  
+
+# Ingress
+- only layer 7 (http/https)
+- needs an ingress controller
+- https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
+  - NGINX Ingress Controller
+  - minikube: `minikube addons enable ingress`
+  - `k get pods,svc,deploy -n ingress-nginx`
+  
+![Ingress](../../images/06_Networking/image-6.png)
+
+## Ingress rules
+- host (optional)
+- paths
+- backend (service and port)
+- Path types: `Exact` (nuance: it does not tolerate trailing `/`) and `Prefix`
+- See [corellian-ingress.yaml](./00-exercises/ex_chapter5/corellian-ingress.yaml)
+- `curl --resolve "star-alliance.com:80:$( minikube ip )" -i http://star-alliance.com/corellian/api` (see https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
+- alternative: add `$( minikube ip ) http://star-alliance.com` to `/etc/hosts`
