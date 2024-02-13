@@ -124,7 +124,7 @@ machine, illustrated by the following wget command:
 
 
 ```bash
-$ kubectl run tmp --image=busybox --restart=Never -it --rm -n chapter5 -- wget 10.106.223.154:80 --timeout=5 --tries=1
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -- wget 10.106.223.154:80 --timeout=5 --tries=1
 Connecting to 10.106.223.154:80 (10.106.223.154:80)
 saving to 'index.html'
 index.html           100% |********************************|   431  0:00:00 ETA
@@ -205,3 +205,109 @@ metadata:
 - See [corellian-ingress.yaml](./00-exercises/ex_chapter5/corellian-ingress.yaml)
 - `curl --resolve "star-alliance.com:80:$( minikube ip )" -i http://star-alliance.com/corellian/api` (see https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 - alternative: add `$( minikube ip ) http://star-alliance.com` to `/etc/hosts`
+
+
+# CoreDNS
+- CoreDNS is a DNS server implementation in Kubernetes
+- https://coredns.io
+- also "CoreDNS" by John Belamaric & Cricket Liu
+- `k get deploy -n kube-system coredns`
+- It mounts a config `coredns` (more info on configuration: https://coredns.io/manual/toc/#configuration)
+- customizing the mapping:
+  - create a new cm `coredns-custom` (m.b. `coredns`??) in the ns `kube-system` and delete the pod (force deployment to reload it)
+
+
+- Resolving from the same namespace
+  - by hostname
+
+```bash
+$ kubectl run tmp -n chapter5 --image=busybox --restart=Never -it --rm -- wget echoserver-clusterip:80 --timeout=5 --tries=1
+```
+
+![Resolving in same ns](../../images/06_Networking/image-7.png)
+
+- Resolving from a different namespace
+  - by hostname and namespace
+  - the full hostname is `echoserver.other.svc.cluster.local`
+  - in this case `svc` stands for service, and `cluster.local` is defined in the coredns cm
+
+```bash
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -- wget echoserver-clusterip.chapter5:80 --timeout=5 --tries=1
+```
+
+![resolving from a different ns](../../images/06_Networking/image-8.png)
+
+
+- DNS for Pods
+  - pods can communicate over IPs across Namespaces
+  - CoreDNS config may have `pods insecure` option → DNS names with `-` instead of `.` will be created for pod IPs
+  - this option may be disabled: `pods disabled`
+
+```bash
+# both work (use port 8080, because no service inbetween)
+# by ip
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -n chapter5 -- wget 10.244.1.22:8080 --timeout=5 --tries=1
+# by DNSed ip different ns
+$ kubectl run tmp --image=busybox --restart=Never -it --rm -- wget 10-244-1-22.chapter5.pod:8080 --timeout=5 --tries=1
+
+# not working without chapter5.pod
+```
+
+![DNS for pods](../../images/06_Networking/image-9.png)
+
+
+# Container Network Interface CNI
+- consists of specification and libraries for writing plugins to configure network interfaces in Linux containers, along with a number of plugins
+- Concerns: 
+  - network connectivity of containers
+  - removing allocated resources when the container is deleted
+
+
+
+# Choosing a CNI Network Provider for Kubernetes
+https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/
+https://web.archive.org/web/20221207195504/https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/
+
+
+Why Use CNI: default kubenet is limited (e.g. max 50 EC2)
+
+Providers:
+- Calico
+- Canal (Flannel + Calico)
+- flannel
+- Weave Net
+- kopeio-vxlan
+- kube-router
+- romana
+
+Table
+- Network Model
+  - either encapsulated (VXLAN), or unencapsulated layer 2 . 
+  - Encapsulating is theoretically slower
+- Route Distribution
+  - For layer 3 
+  - typically via BGP
+  - nice to have, if you plan to build clusters split across network segments
+  - It is an exterior gateway protocol designed to exchange routing and reachability information on the internet
+  - BGP can assist with pod to pod networking between clusters
+- Network Policies
+  - https://kubernetes.io/docs/concepts/services-networking/network-policies/
+- Mesh
+  - Pod2Pod Networking
+
+| Provider          | Network Model      | Route Distribution | Network Policies | Mesh | External Datastore | Encryption | Ingress/Egress Policies | Commercial Support |
+| ----------------- | ----------------- | ------------------ | ---------------- | ---- | ------------------ | ---------- | ----------------------- | ------------------ |
+| Calico            | Layer 3           | Yes                | Yes              | Yes  | Etcd$^1$           | Yes        | Yes                     | Yes                |
+| Canal             | Layer 2 vxlan     | N/A                | Yes              | No   | Etcd$^1$           | No         | Yes                     | No                 |
+| flannel           | vxlan             | No                 | No               | No   | None               | No         | No                      | No                 |
+| kopeio-networking | Layer 2 vxlan$^2$ | N/A                | No               | No   | None               | Yes$^3$    | No                      | No                 |
+| kube-router       | Layer 3           | BGP                | Yes              | No   | No                 | No         | No                      | No                 |
+| romana            | Layer 3           | OSPF               | Yes              | No   | Etcd               | No         | Yes                     | Yes                |
+| Weave Net         | Layer 2 vxlan$^4$ | N/A                | Yes              | Yes  | No                 | Yes        | Yes$^5$                 | Yes                |
+
+1. Calico and Canal include a feature to connect directly to Kubernetes, and not use Etcd.
+2. kopeio CNI provider has three different networking modes: vlan, layer2, GRE, and IPSEC.
+3. kopie-network provides encryptions in IPSEC mode, not the default vxlan mode.
+4. Weave Net can operate in AWS-VPC mode without vxlan, but is limited to 50 nodes in EC2.
+5. Weave Net does not have egress rules out of the box.
+
