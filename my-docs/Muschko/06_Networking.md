@@ -174,7 +174,7 @@ metadata:
 - exposes a single IP
 - loadbalancing strategy is up to the external LB
 - also not callable via dns
-- See [echoserver-lb-service.yaml](./00-exercises/ex_chapter5/echoserver-lb-service.yaml/)
+- See [echoserver-lb-service.yaml](./00-exercises/ex_chapter5/echoserver-lb-service.yaml)
 
 ![LoadBalancer](../../images/06_Networking/image-5.png)
 
@@ -311,3 +311,40 @@ Table
 4. Weave Net can operate in AWS-VPC mode without vxlan, but is limited to 50 nodes in EC2.
 5. Weave Net does not have egress rules out of the box.
 
+
+
+# Excercies
+
+8. Create a rewrite rule https://coredns.io/plugins/rewrite/ for the CoreDNS configuration that allows referencing a Service using the cluster domain `cka.example.com`. Ensure that the custom CoreDNS configuration takes effect.
+
+In the CM coredns add the `rewrite` rule. It's more compliated and requires rewriting of the answer. Otherwise there is a discrepancy between the DNS in the request and the response, causing `wget` to throw an error.
+```
+...
+ready
+rewrite stop {
+    name substring svc.cka.example.com svc.cluster.local answer auto
+}
+kubernetes cluster.local in-addr.arpa ip6.arpa {
+    pods insecure
+    fallthrough in-addr.arpa ip6.arpa
+    ttl 30
+}
+....
+
+```
+
+
+- `nslookup` works even with a simple `rewrite`. This can be used to unterstand, whether substitution takes place.
+- However `wget` would fail and requires the `answer`.
+```bash
+$ k run tmp --image busybox -it --rm --restart Never -- nslookup echoserver.external.svc.cka.example.co
+m
+Server:         10.96.0.10
+Address:        10.96.0.10:53
+
+
+Name:   echoserver.external.svc.cka.example.com
+Address: 10.107.140.205
+
+pod "tmp" deleted
+```

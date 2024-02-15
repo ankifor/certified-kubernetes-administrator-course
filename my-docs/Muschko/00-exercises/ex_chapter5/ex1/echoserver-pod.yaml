@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: echoserver
+  name: echoserver
+  namespace: external
+spec:
+  containers:
+  - image: k8s.gcr.io/echoserver:1.10
+    name: echoserver
+    ports:
+    - containerPort: 8080
+    resources: {}
