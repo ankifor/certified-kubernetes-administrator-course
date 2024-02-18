@@ -143,3 +143,29 @@ echo "The current remote working directory is: \$PWD"
 EOF
 
 ```
+
+# Remove strange files
+find . -maxdepth 1 -type f -name "*~*" | xargs rm
+
+# Mass renaming
+
+```bash
+# type -d for directories
+find . -maxdepth 1 -type f | sed -e 'p' -E -e "s/'//g" -E -e "s/[()]/_/g" -E -e "s/(,| |_|)+/_/g" -E -e "s/_*-_*/-/g" -E -e "s/_\././g" -E -e "s/\b_//g" | xargs -n2 -d '\n' bash -c 'test "$0" != "$1" && echo "$0" "-->" "$1"'
+
+
+find . -maxdepth 1 -type f | sed -e 'p' -E -e "s/&/_and_/g" -E -e "s/['’·]//g" -E -e "s/[()]/_/g" -E -e "s/(,| |_)+/_/g" -E -e "s/_*-_*/-/g" -E -e "s/(\b_|_\b)//g" | xargs -n2 -d '\n' bash -c 'test "$0" != "$1" && echo "$0" "-->" "$1"'
+
+
+find . -maxdepth 1 -type f | sed -e 'p' -E -e "s/&/_and_/g" -E -e "s/['’·]//g" -E -e "s/[()]/_/g" -E -e "s/(,| |_)+/_/g" -E -e "s/_*-_*/-/g" -E -e "s/(\b_|_\b)//g" | xargs -n2 -d '\n' bash -c 'test "$0" != "$1" && mv "$0" "$1"'
+```
+
+
+# Rclone
+
+
+```bash
+/usr/bin/rclone sync ./Введение_в_сети_ЭВМ onedrive:/Documents/07_OtherStudies/Введение_в_сети_ЭВМ
+
+
+```
