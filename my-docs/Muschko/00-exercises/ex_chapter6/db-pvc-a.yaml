@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: db-pvc
+  namespace: chapter6a
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: "" #empty for static provisioning
+  resources:
+    requests:
+      storage: 256Mi

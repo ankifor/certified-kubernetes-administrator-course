@@ -17,6 +17,9 @@
   - `spec.containers.volumeMounts[]`
 
 # Persitent Volumes
+- https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+- https://github.com/kubernetes/design-proposals-archive/blob/main/storage/persistent-storage.md
+
 - a PV is either provided by an administrator or is assigned dynamically by mapping to a storage class
 - a PV is completely decoupled from a pod
 ![PVC and PV](../../images/07_Storage/image-1.png)
@@ -39,15 +42,16 @@
     ```
   - Volume Modes:
     - `Filesystem`: Default. Mounts the volume into a directory of the consuming Pod. Creates a filesystem first if the volume is backed by a block device and the device is empty
-    - `Block`: Used for a volume as a raw block device without a filesystem on it
+    - `Block`: Used for a volume as a raw block device without a filesystem on it (in a pod it should be mounted as `.spec.containers.volumeDevices` instead of mount path)
   - Access mode:
-    - `ReadWriteOnce` / `RWO`: Read/write access by a single node
+    - `ReadWriteOnce` / `RWO`: Read/write access by a **single node**
     - `ReadOnlyMany` / `ROX`: Read-only access by many nodes
     - `ReadWriteMany` / `RWX`: Read/write access by many nodes
     - `ReadWriteOncePod` / `RWOP`: Read/write access mounted by a single Pod
   - Reclaim policy (what happens when PVC is deleted)
     - `Retain`: Default. When PersistentVolumeClaim is deleted, the PersistentVolume is “released” and can be reclaimed
     - `Delete`: Deletion removes PersistentVolume and its associated storage
+- It is possible to specify `NodeAffinity` in the PV
 
 # PVC
 
@@ -60,12 +64,30 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
-  storageClassName: "" #empty for static provisioning
+  storageClassName: "" 
   resources:
     requests:
       storage: 256Mi
 ```
+- Claims that request the class `""` effectively disable dynamic provisioning for themselves
 - The binding to an appropriate PersistentVolume happens automatically based on those criteria
-- Binding is 1-to-1.
+  - The PV can be selected explicitly `spec.volumeName`
+  - The binding may fail, if the PV is already claimed
+  - To guarantee the binding: use in PV `.spec.claimRef`
+  ```yaml
+  claimRef:
+    name: foo-pvc
+    namespace: foo
+  ```
+- **Binding is 1-to-1**.
 - See [pod.yaml](./00-exercises/ex_chapter6/pod.yaml)
 - when mounted, the field "Used By" of pvc is set
+
+# Storage Class
+- https://kubernetes.io/docs/concepts/storage/storage-classes/
+- https://github.com/kubernetes/design-proposals-archive/blob/main/storage/volume-provisioning.md
+- The storage class is used to provision a PersistentVolume dynamically based on its criteria
+- Kubernetes itself is unopinionated about what classes represent.
+- `k describe storageclasses` (standard is defined by default)
+- creation of a storageclass is only via manifests
+- see [fast-sc.yaml](./00-exercises/ex_chapter6/fast-sc.yaml) and [db-pvc-standard.yaml](./00-exercises/ex_chapter6/db-pvc-standard.yaml)
