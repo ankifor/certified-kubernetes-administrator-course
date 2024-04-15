@@ -1,0 +1,10 @@
+apiVersion: snapshot.storage.k8s.io/v1alpha1
+kind: VolumeSnapshot
+metadata:
+  name: snapshot-db-pvc
+  namespace: chapter6
+spec:
+  source:
+    kind: PersistentVolumeClaim
+    name: db-pvc
+  snapshotClassName: snapshot-class
