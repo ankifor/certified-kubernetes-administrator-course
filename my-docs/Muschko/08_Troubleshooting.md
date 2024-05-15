@@ -66,5 +66,42 @@ $ kubectl run tmp --image=busybox -it --rm -- wget -O- 10.99.155.165:80
   - etcd: A key-value store for storing the cluster data.
   - kube-scheduler: Selects nodes for Pods that have been scheduled but not created.
   - kube-controller-manager: Runs controller processes (e.g., the job controller responsible for Job object execution).
+    - https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/
+    - a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state
+    - Examples: replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
   - cloud-controller-manager: Links cloud provider–specific API to the Kubernetes cluster. This controller is not available in on-premise cluster installations of Kubernetes
   - `kubectl logs kube-apiserver-minikube -n kube-system`
+
+- Typical status is `NotReady`. Possible reasons:
+  - Insufficient resources
+  - Issues with the kubelet process
+  - Issues with kube-proxy
+- `kubectl describe node worker-1`
+  - Conditions
+  - ![Conditions](../../images/08_Troubleshooting/image-4.png)
+  - SSH to the node and run 
+    - `top`: check number of processes and memory
+    - `df -h` check disc space
+    - `systemctl status kubelet` (m.b. with `sudo`)
+    - `journalctl -u kubelet.service`
+    - `systemctl restart kubelet`
+    - `openssl x509 -in /var/lib/kubelet/pki/kubelet.crt -text` (config directory is mentioned in `systemctl status`): check the expiration of certificate
+    - `sudo systemctl daemon-reload` -- when changing the sytemd config or related files
+    - `sudo systemctl restart kubectl`
+
+
+- Check `kube-proxy` pod
+  - `kubectl get pods -n kube-system -o wide` to see on which nodes it runs
+  - Event logs:
+    - `kubectl describe pod kube-proxy-csrww -n kube-system`
+    - `kubectl describe ds kube-proxy -n kube-system`
+  - Logs (only for pods)
+    - `kubectl logs kube-proxy-csrww -n kube-system`
+  - 
+
+# Exercises Notes
+- when testing an nginx endpoint: 
+  - find the IP of the pod
+  - check the default config of the nginx: `/etc/nginx/conf.d/default.conf` to get the exposed port and path
+  - `kubectl run -n chapter7 --image busybox tmp --rm=true -it --restart=Never -- sh -c "wget 10.244.0.8 && cat index.html"`
+  - or ssh to a node and run wget/curl.

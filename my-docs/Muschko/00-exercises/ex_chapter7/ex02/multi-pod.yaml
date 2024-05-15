@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: multi
+  name: multi
+  namespace: chapter7
+spec:
+  containers:
+  - image: nginx:1.21.6
+    name: nginx
+    resources:
+      requests:
+        cpu: 100m
+        memory: 20Mi
+    volumeMounts:
+    - mountPath: "/var/log/nginx"
+      name: logsnginx-volume
+  - image: busybox:1.35.0
+    name: streaming
+    command: ["/bin/sh"]
+    args: ["-c", "tail -n+1 -f /var/log/nginx/access.log"]
+    resources:
+      requests:
+        cpu: 100m
+        memory: 20Mi
+    volumeMounts:
+    - mountPath: "/var/log/nginx"
+      name: logsnginx-volume
+  volumes:
+  - name: logsnginx-volume
+    emptyDir:
+      sizeLimit: 500Mi  
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
