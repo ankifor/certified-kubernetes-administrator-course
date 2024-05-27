@@ -16,6 +16,8 @@
 - train yq (merging)
 - CoreDNS
 
+- nsenter
+- seccomp
 
  - storage
    - retain

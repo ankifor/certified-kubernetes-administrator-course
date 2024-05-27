@@ -15,6 +15,22 @@ cat -n
 echo -n "paswrd"| base64
 echo -n "bX1zcWw=" | base64 --decode
 ```
+# Linux namespaces
+```bash
+# -m = mount ns
+# -t = target
+nsenter -m -t 3130 sh
+
+
+lsns -p 3130
+
+
+nsenter -t 3130 -n ip a s
+nsenter -t 3130 -n ip route
+nsenter -t 3130 -p -r ps -ef # processes
+```
+
+
 # GREP and AWK
 
 ```bash
@@ -80,8 +96,11 @@ curl -v --cacert cacerts.pem --cert-type P12 --cert widnr_dabas-technical-dev.p1
 
 # When no binaries on the machine
 ```bash
-# print file
+# print file (does not work in shell)
 echo $(</var/lib/minikube/certs/etcd/ca.crt)
+
+# print file (shell)
+while read line; do echo $line; done <file.txt
 
 # no ls
 cd /to/dir
