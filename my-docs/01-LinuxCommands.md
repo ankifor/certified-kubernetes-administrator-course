@@ -28,6 +28,11 @@ lsns -p 3130
 nsenter -t 3130 -n ip a s
 nsenter -t 3130 -n ip route
 nsenter -t 3130 -p -r ps -ef # processes
+
+
+# get all file accesses of the process
+strace -f -t -e trace=file minikube kubectl -- config view
+
 ```
 
 

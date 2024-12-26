@@ -1,5 +1,6 @@
 # ToDos
 
+- kube from scratch https://github.com/kelseyhightower/Kubernetes-the-hard-way
 - Installation via kubeadm --> try with kodecloud
   - esp. CNI
   - new nodes
@@ -22,6 +23,19 @@
  - storage
    - retain
    - same pv, multiple pvc
+
+
+kubectl config view &
+kill -STOP $!
+
+
+- Kind (kubernetes in docker) as alternative to minikube
+  - runs kubernetes in containers
+  - controle plane is a container
+  - worker nodes are also containers
+  - https://kind.sigs.k8s.io/docs/user/quick-start/
+
+
 
 - troubleshooting scheduler and worker nodes (`journalctl` and `systemctl`)
 
