@@ -1,5 +1,11 @@
 # ToDos
 
+
+- try exam https://killer.sh/
+
+- kubeadm
+- etcdctl
+
 - kube from scratch https://github.com/kelseyhightower/Kubernetes-the-hard-way
 - Installation via kubeadm --> try with kodecloud
   - esp. CNI
@@ -27,6 +33,9 @@
 
 kubectl config view &
 kill -STOP $!
+
+
+Practice, Practice and Practice again. Do this until you can repeat things in your head without looking at your notes / documentation. This is especially true for ETCD Backup and Restore, Kubeadm Install and Upgrade. Even when fully memorised, practice again. Trust me, you do not want to rely on the docs to so heavily in the exam. 
 
 
 - Kind (kubernetes in docker) as alternative to minikube

@@ -29,3 +29,15 @@ encounter any multiple-choice questions during the exam.
 Orga:
 - 2h
 - 66%+ correct
+
+
+
+- https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad#cka-and-ckad-environment
+  - `sudo -i`
+  - `ssh <node>`
+  - kubectl/k
+  - jq
+  - curl/wget
+  - man
+  - tmux
+  - kubectl config set contexts.minikube.namespace chapter7
