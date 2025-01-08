@@ -83,6 +83,40 @@ List ServiceAccounts `k get sa`
 Assign to a pod (**depricated**) 
 `kubectl run build-observer --image=alpine --restart=Never --serviceaccount=build-bot`
 
+```bash
+kubectl exec -it  tmp -- cat /var/run/secrets/kubernetes.io/serviceaccount/token | sed 's/\s//g' | jq -R 'split(".") |.[0],.[1] | @base64d | fromjson'
+```
+```yaml
+{
+  "aud": [
+    "https://kubernetes.default.svc.cluster.local",
+    "k3s"
+  ],
+  "exp": 1767730241,
+  "iat": 1736194241,
+  "iss": "https://kubernetes.default.svc.cluster.local",
+  "jti": "590a36a1-eea5-4269-a289-bb9583406d37",
+  "kubernetes.io": {
+    "namespace": "default",
+    "node": {
+      "name": "controlplane",
+      "uid": "6fff1762-1ab1-4031-9247-e293a0ddad73"
+    },
+    "pod": {
+      "name": "tmp",
+      "uid": "3cf038d3-ab79-4075-a8e7-83521949d2bf"
+    },
+    "serviceaccount": {
+      "name": "default",
+      "uid": "1df6b13f-152e-412c-b4d4-f4de7cee1beb"
+    },
+    "warnafter": 1736197848
+  },
+  "nbf": 1736194241,
+  "sub": "system:serviceaccount:default:default"
+}
+```
+
 
 
 ## Create role

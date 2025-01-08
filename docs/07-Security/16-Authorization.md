@@ -46,6 +46,6 @@ In this section, we will take a look at authorization in kubernetes
   ![mode1](../../images/mode1.PNG)
   
   
-  #### K8s Reference Docs
-  - https://kubernetes.io/docs/reference/access-authn-authz/authorization/
-  
+## K8s Reference Docs
+- https://kubernetes.io/docs/reference/access-authn-authz/authorization/
+

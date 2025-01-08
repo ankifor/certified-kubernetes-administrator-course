@@ -34,6 +34,8 @@ In this section, we will take a look at TLS certificate creation in kubernetes
 - Generate CSR
   ```
   $ openssl req -new -key admin.key -subj "/CN=kube-admin" -out admin.csr
+
+  $ openssl req -new -key admin.key -config openssl.conf -out admin.csr
   ```
 - Sign certificates
   ```

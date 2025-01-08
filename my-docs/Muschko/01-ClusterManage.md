@@ -220,3 +220,24 @@ $ kubectl get nodes
 
 
 ![Alt text](../../images/01-ClusterManage/image.png)
+
+
+
+
+# Troubleshooting when kubectl not available
+```bash
+crictl ps -a
+crictl logs <container-id>
+
+
+```
+4a50bf20c4cd6
+
+## Inspect Server Logs - Hardware setup
+- Inspect server logs using journalctl
+  ```
+  $ journalctl -u etcd.service -l
+  $ kubectl logs etcd-master
+  $ docker ps -a
+  $ docker logs <container-id>
+  ```
