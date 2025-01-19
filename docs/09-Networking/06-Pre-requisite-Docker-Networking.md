@@ -74,7 +74,7 @@ $ docker run nginx
 ```
 
 ## To list the Network Namespace
-
+![Alt text](../../images/06-Pre-requisite-Docker-Networking/image.png)
 ```
 $ ip netns
 1c452d473e2a (id: 2)

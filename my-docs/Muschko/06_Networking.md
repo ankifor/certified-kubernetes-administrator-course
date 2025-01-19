@@ -207,6 +207,31 @@ metadata:
 - alternative: add `$( minikube ip ) http://star-alliance.com` to `/etc/hosts`
 
 
+```bash
+kubectl create ingress ingress-test --rule="wear.my-online-store.com/wear*=wear-service:80"
+```
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: rewrite
+  namespace: default
+spec:
+  rules:
+  - host: rewrite.bar.com
+    http:
+      paths:
+      - backend:
+          serviceName: http-svc
+          servicePort: 80
+        path: /something(/|$)(.*)
+```
+
+
+
 # CoreDNS
 - CoreDNS is a DNS server implementation in Kubernetes
 - https://coredns.io
@@ -347,4 +372,73 @@ Name:   echoserver.external.svc.cka.example.com
 Address: 10.107.140.205
 
 pod "tmp" deleted
+```
+
+
+
+# Important Linux commands
+```bash
+ip link
+ip addr
+ip addr add 192.168.1.10/24 dev eth0
+cat /etc/network/interfaces
+
+route
+ip route show
+ip route list
+ip route add 192.168.1.0/24 via 192.168.2.1
+
+cat /proc/sys/net/ipv4/ip_forward
+cat /etc/sysctl.conf
+# net.ipv4.ip_forward=1
+
+sysctl -a  # view sys vars
+sysctl --system #reload
+
+
+
+arp
+route
+
+# what ports are being listened to?
+netstat -pl
+
+cat >> /etc/hosts
+172.17.0.64  web
+
+
+cat /etc/resolv.conf
+# nameserver 127.0.0.53
+# options edns0
+# search mycompany.com prod.mycompany.com
+
+# resolution order
+cat /etc/nsswitch.conf
+# hosts:          files dns
+# networks:       files
+
+
+
+ip netns add red
+ip netns add blue
+
+# execute ip command in a network ns
+ip netns exec red ip link
+ip -n red link
+
+
+ip netns exec red ping 192.168.15.2
+ip netns exec red arp
+
+
+
+docker network ls
+
+
+ls /opt/cni/bin
+ls /etc/cni/conf.d
+
+# for services
+iptables -L -t -nat
+
 ```

@@ -187,6 +187,7 @@ $ ip link
 $ ip link set dev v-net-0 up
 ```
 - To connect network namespace to the bridge. Creating a virtual cabel
+![Alt text](../../images/05-Pre-requisite-Network-Namespace/image.png)
 ```
 $ ip link add veth-red type veth peer name veth-red-br
 
@@ -229,6 +230,9 @@ $ ip link set dev veth-blue-br up
 $ ping 192.168.15.1
 ```
 
+
+
+![Alt text](../../images/05-Pre-requisite-Network-Namespace/image-1.png)
 > On the ns
 ```
 $ ip netns exec blue ping 192.168.1.1

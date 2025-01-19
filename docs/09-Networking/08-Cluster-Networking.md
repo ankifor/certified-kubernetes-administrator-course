@@ -7,6 +7,10 @@ In this section, we will take a look at **Pre-requisite of the Cluster Networkin
 - Set the unique hostname.
 - Get the IP addr of the system (master and worker node).
 - Check the Ports.
+- Required ports: https://kubernetes.io/docs/reference/networking/ports-and-protocols/
+
+![Alt text](../../images/08-Cluster-Networking/image.png)
+
 
 ## IP and Hostname
 

@@ -19,6 +19,12 @@ $ ip addr
 
 ![net-14](../../images/net14.PNG)
 
+- when adding an ip, it is not persisted
+- to persist: `/etc/network/interfaces`
+```
+$ ip addr add 192.168.1.10/24 dev eth0
+```
+
 ## Routing
 
 - To see the existing routing table on the host system.
@@ -47,7 +53,7 @@ $ ip route add 192.168.1.0/24 via 192.168.2.1
 $ ip route add default via 192.168.2.1
 ```
 
-- To check the IP forwarding is enabled on the host.
+- To check the IP forwarding is enabled on the host (runtime; not persisted)
 ```
 $ cat /proc/sys/net/ipv4/ip_forward
 0

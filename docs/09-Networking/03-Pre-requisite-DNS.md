@@ -52,6 +52,7 @@ $ curl http://web
 $ cat /etc/resolv.conf
 nameserver 127.0.0.53
 options edns0
+search mycompany.com
 ```
 
 - To change the order of dns resolution, we need to do changes into the `/etc/nsswitch.conf` file.
@@ -105,7 +106,7 @@ PING github.com (140.82.121.3) 56(84) bytes of data.
 - Useful networking tools to test dns name resolution.
 
 #### nslookup 
-
+- it does not consider `/etc/hosts`!
 ```
 $ nslookup www.google.com
 Server:         127.0.0.53
@@ -118,6 +119,7 @@ Name:   www.google.com
 ```
 
 #### dig
+- it does not consider `/etc/hosts`!
 
 ```
 $ dig www.google.com

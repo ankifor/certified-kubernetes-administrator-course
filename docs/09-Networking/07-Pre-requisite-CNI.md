@@ -24,6 +24,14 @@ $ ls /opt/cni/bin/
 bridge  dhcp  flannel  host-device  host-local  ipvlan  loopback  macvlan  portmap  ptp  sample  tuning  vlan
 ```
 
+## Docker 
+- CNM - container network model
+- does not support CNI
+- kubernetes has a workaround for this
+```bash
+docker run --network=none nginx
+bridge add 2e34dcf34 /var/run/netns/2e34dcf34
+```
 
 
 
