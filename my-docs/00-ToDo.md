@@ -1,5 +1,14 @@
 # ToDos
 
+1) affinity 
+2) taints drain
+3) upgrade cluster
+4) etcd
+5) 
+
+
+
+
 
 - try exam https://killer.sh/
 

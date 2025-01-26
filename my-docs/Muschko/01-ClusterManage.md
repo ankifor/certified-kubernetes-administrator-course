@@ -14,10 +14,12 @@
 Single control plane and one worked node https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 ![Alt text](../../images/01-ClusterCreation/image.png)
 
+install first containerd
+
 ## kubeadm init
 
-- `--pod-network-cidr` ??
-- `--apiserver-advertise-address` ??
+- `--pod-network-cidr` -- see `ip a`
+- `--apiserver-advertise-address` -- see `ip a` and `ip route`, port 6443 should be reachable from another nodes!!!
 - use `kubeadm token create --print-join-command` to get `kubeadmin join` command for workers
 
 ```bash
@@ -57,6 +59,7 @@ or
 
 ## Worker-Node
 
+- user join with `--v=2` for logs 
 ```bash
 $ sudo kubeadm join 10.8.8.10:6443 --token fi8io0.dtkzsy9kws56dmsp \
     --discovery-token-ca-cert-hash \
@@ -128,6 +131,15 @@ control-plane-join     Join a machine as a control plane instance
 
 ![Alt text](../../images/01-ClusterCreation/image-2.png)
 
+### Number of control nodes
+$$ \text{Quorum} = N/2 + 1 $$
+If Quorum is not reached, cluster fails
+$\text{Quorom}(2)=2$ -> So min 3 nodes
+
+Odd vs even
+
+Problem with even: e.g. 6, then Qurum is 4. If cluster breaks down due to Network connectivity into 2 equal groups, neither of them can achieve quorum.
+
 
 ## Upgrading Cluster version
 - Upgarde from one minor version to a next one (or to a higher patch), e.g. 1.18 to 1.19. Avoid jumping over minor versions
@@ -137,7 +149,7 @@ control-plane-join     Join a machine as a control plane instance
 
 ![Alt text](../../images/01-ClusterCreation/image-3.png)
 
-### Uograde control plane
+### Upgrade control plane
 ```bash
 # uodate sources as described here
 # [/etc/apt/sources.list.d/](https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/#how-to-migrate-deb)
@@ -159,7 +171,7 @@ $ kubeadm version
 # it may ask to upgrade kubeadm to this version
 $ kubeadm upgrade plan
 
-# it may also be needed to upgrade NCI
+# it may also be needed to upgrade CNI
 $ sudo kubeadm upgrade apply v1.29.0
 
 $ kubectl drain kube-control-plane --ignore-daemonsets
