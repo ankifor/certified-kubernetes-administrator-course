@@ -116,7 +116,44 @@ spec:
   - limit=request
 
 
+- LimitRange
+- ResourceQuotas
 
+
+# Quality of service types
+- Best-effort
+  - no limits/requests
+- Bustable
+  - limits != requests
+- Guaranteed
+  - when limits = requests
+
+
+# Priorities
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+name: high-priority
+value: 1000
+globalDefault: false
+description: This is a very high-priority Pod class
+---
+apiVersion: v1
+kind: Pod
+metadata:
+name: random-generator
+labels:
+env: random-generator
+spec:
+containers:
+- image: k8spatterns/random-generator:1.0
+name: random-generator
+priorityClassName: high-priority
+```
+- If no available ressources, less-priority pods can get evicted
+- `preemptionPolicy: Never` will prevent triggering eviction of any other pods
+- `ResourceQuotas` may regulate this
 
 
 # Node Labeling
