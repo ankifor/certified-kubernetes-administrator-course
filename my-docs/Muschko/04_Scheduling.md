@@ -108,6 +108,16 @@ spec:
         cpu: 500m  
 ```
 
+# Recommendation on Limits and Requests
+- https://home.robusta.dev/blog/stop-using-cpu-limits
+  - do not use cpu-limits. Only cpu-requests
+  - otherwise: if pod does not use to the the limit, this amount of cpu is wasted; if pod would benefit from more cpu, it cannot
+- https://home.robusta.dev/blog/kubernetes-memory-limit
+  - limit=request
+
+
+
+
 
 # Node Labeling
 
