@@ -22,6 +22,9 @@
 # Persitent Volumes
 - https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 - https://github.com/kubernetes/design-proposals-archive/blob/main/storage/persistent-storage.md
+  - A PersistentVolume (PV) is a storage resource provisioned by an administrator. It is analogous to a node
+  - A PersistentVolumeClaim (PVC) is a user's request for a persistent volume to use in a pod. It is analogous to a pod
+
 
 - a PV is either provided by an administrator or is assigned dynamically by mapping to a storage class
 - a PV is completely decoupled from a pod
